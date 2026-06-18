@@ -1,0 +1,1205 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Ruleta de la Verdad - Mitos y Realidades del Consumo</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    h1, h2, h3, .font-title {
+      font-family: 'Outfit', sans-serif;
+    }
+    /* Efecto de relieve en la ruleta */
+    .wheel-shadow {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.2);
+    }
+    /* Animación del indicador de la ruleta */
+    @keyframes tick {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(-18deg); }
+      100% { transform: rotate(0deg); }
+    }
+    .indicator-tick {
+      animation: tick 0.15s ease-out;
+    }
+    /* Estilos personalizados para scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e1b4b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4338ca;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f46e5;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+  <!-- BANNER / DECORACIÓN SUPERIOR -->
+  <div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-indigo-900/20 via-purple-900/5 to-transparent -z-10 pointer-events-none"></div>
+
+  <!-- NAVEGACIÓN -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 px-4 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-300">La Ruleta de la Verdad</h1>
+          <p class="text-xs text-slate-400">Taller interactivo de prevención y mitos de consumo</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Indicador de sonido -->
+        <button id="toggle-sound" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 transition flex items-center gap-2 text-sm text-indigo-300">
+          <span id="sound-icon">🔊</span> <span id="sound-status">Sonido Activo</span>
+        </button>
+        <a href="#taller-guia" class="text-xs bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-lg hover:bg-indigo-600/30 transition font-medium">Guía Docente</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- INTRODUCCIÓN -->
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <span class="px-3 py-1 text-xs font-semibold tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full uppercase">Evidencia Científica vs Creencias</span>
+      <h2 class="text-3xl md:text-5xl font-black mt-3 tracking-tight text-white leading-tight">
+        Derribando <span class="text-indigo-400 underline decoration-indigo-500/50 decoration-wavy">Barreras Defensivas</span> en el Aula
+      </h2>
+      <p class="text-slate-300 text-base md:text-lg mt-4 leading-relaxed">
+        Contrastar ideas preconcebidas con evidencia científica real ayuda a los estudiantes a reflexionar de manera activa. ¡Gira la ruleta y desafía los mitos o responde las preguntas clave sobre el consumo de sustancias!
+      </p>
+    </div>
+
+    <!-- SELECCIÓN DE MODO DE JUEGO (TABS) -->
+    <div class="flex justify-center mb-10">
+      <div class="bg-slate-900/90 border border-slate-800 p-1.5 rounded-2xl flex max-w-lg w-full shadow-inner">
+        <button onclick="setMode('todos')" id="btn-mode-todos" class="flex-1 py-3 px-4 rounded-xl text-xs md:text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/20">
+          🎯 Todo Mezclado
+        </button>
+        <button onclick="setMode('mitos')" id="btn-mode-mitos" class="flex-1 py-3 px-4 rounded-xl text-xs md:text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">
+          ⚠️ Solo Mitos
+        </button>
+        <button onclick="setMode('preguntas')" id="btn-mode-preguntas" class="flex-1 py-3 px-4 rounded-xl text-xs md:text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all">
+          ❓ Preguntas clave
+        </button>
+      </div>
+    </div>
+
+    <!-- FILTRO RÁPIDO DE SUSTANCIAS -->
+    <div class="mb-8 flex flex-wrap justify-center gap-2 items-center">
+      <span class="text-xs text-slate-400 mr-2 uppercase tracking-wider font-semibold">Filtrar ruleta por:</span>
+      <button onclick="filterBySubstance('all')" id="tag-sub-all" class="px-3 py-1 rounded-full text-xs font-medium border border-indigo-500/50 bg-indigo-500/20 text-indigo-200 transition-all">Todas</button>
+      <button onclick="filterBySubstance('Marihuana')" id="tag-sub-marihuana" class="px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/15 text-emerald-300 transition-all">🍁 Marihuana</button>
+      <button onclick="filterBySubstance('Alcohol')" id="tag-sub-alcohol" class="px-3 py-1 rounded-full text-xs font-medium border border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/15 text-amber-300 transition-all">🍺 Alcohol</button>
+      <button onclick="filterBySubstance('Vapeo/Tabaco')" id="tag-sub-vapes" class="px-3 py-1 rounded-full text-xs font-medium border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/15 text-cyan-300 transition-all">💨 Vape/Cigarro</button>
+      <button onclick="filterBySubstance('Multisustancia')" id="tag-sub-multi" class="px-3 py-1 rounded-full text-xs font-medium border border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 text-rose-300 transition-all">🧠 Adicción/Mezclas</button>
+    </div>
+
+    <!-- PANEL PRINCIPAL DE RULETA E INFORMACIÓN -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16">
+      
+      <!-- COLUMNA IZQUIERDA: LA RULETA -->
+      <div class="lg:col-span-5 flex flex-col items-center bg-slate-900/40 border border-slate-800/80 p-6 rounded-3xl backdrop-blur-sm shadow-xl relative overflow-hidden">
+        
+        <!-- Luz de fondo dinámica -->
+        <div class="absolute -top-40 -left-40 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Indicador de flecha superior -->
+        <div class="relative z-10 mb-2">
+          <!-- El indicador físico que se agitará -->
+          <div id="wheel-pointer" class="w-10 h-10 transition-transform origin-top flex justify-center items-center">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21L3 9H21L12 21Z" fill="#6366f1" stroke="#ffffff" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="12" cy="7" r="3" fill="#ffffff"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Contenedor Ruleta -->
+        <div class="relative w-full aspect-square max-w-[380px] md:max-w-[400px] mb-6">
+          <canvas id="wheel-canvas" class="w-full h-full cursor-pointer wheel-shadow rounded-full select-none" width="800" height="800"></canvas>
+          
+          <!-- Botón central de la ruleta (Pin) -->
+          <button onclick="spinWheel()" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 md:w-20 md:h-20 bg-slate-950 border-4 border-slate-800 hover:border-indigo-500 rounded-full flex flex-col justify-center items-center shadow-[0_0_20px_rgba(99,102,241,0.5)] group active:scale-95 transition-all duration-150 z-20">
+            <span class="text-[10px] md:text-xs font-extrabold tracking-widest text-indigo-400 group-hover:text-indigo-300 uppercase">GIRAR</span>
+            <span class="text-lg md:text-xl">🎯</span>
+          </button>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="w-full flex gap-3 justify-center">
+          <button onclick="spinWheel()" class="flex-1 max-w-[200px] bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-indigo-500/20 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2">
+            <span>¡Girar Ruleta!</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.213 15M16 10l4.87-4.87M21 5v5h-5" />
+            </svg>
+          </button>
+          <button onclick="selectRandom()" class="px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white transition flex items-center justify-center text-sm font-medium text-slate-300" title="Seleccionar uno al azar sin girar">
+            🎲 Azar
+          </button>
+        </div>
+
+        <!-- Tip de uso móvil -->
+        <p class="text-[11px] text-slate-400/80 mt-4 text-center">
+          💡 Puedes arrastrar o deslizar la ruleta con el dedo/mouse para impulsarla.
+        </p>
+      </div>
+
+      <!-- COLUMNA DERECHA: TARJETA INTERACTIVA DE CONTENIDO -->
+      <div class="lg:col-span-7 h-full">
+        
+        <!-- TARJETA VACÍA / INTRODUCTORIA -->
+        <div id="card-welcome" class="bg-slate-900 border border-slate-800 p-8 rounded-3xl flex flex-col justify-center items-center text-center h-[460px] shadow-xl relative overflow-hidden">
+          <div class="w-20 h-20 bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 rounded-2xl flex items-center justify-center text-4xl mb-6 animate-bounce">
+            🎡
+          </div>
+          <h3 class="text-2xl font-bold mb-3 text-white">¡Rueda la ruleta de la verdad!</h3>
+          <p class="text-slate-400 max-w-md mx-auto mb-6">
+            Gira la ruleta para seleccionar un mito o pregunta. Desafía los prejuicios más arraigados y conoce las realidades que la ciencia respalda.
+          </p>
+          <button onclick="spinWheel()" class="px-6 py-3 bg-slate-800 hover:bg-indigo-600 hover:text-white border border-slate-700 rounded-xl transition text-slate-300 font-semibold text-sm">
+            Comenzar desafío rápido ⚡
+          </button>
+        </div>
+
+        <!-- TARJETA INTERACTIVA (DESAFÍO ACTIVO) -->
+        <div id="card-active" class="hidden bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-3xl shadow-xl flex flex-col justify-between min-h-[460px] relative transition-all duration-300">
+          
+          <!-- Encabezado de la Tarjeta -->
+          <div>
+            <div class="flex justify-between items-center gap-3 border-b border-slate-800 pb-4 mb-4">
+              <div class="flex items-center gap-2">
+                <span id="badge-type" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">MITO</span>
+                <span id="badge-substance" class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300">Sustancia</span>
+              </div>
+              <span id="info-id" class="text-xs text-slate-500 font-mono">ID: 01</span>
+            </div>
+
+            <!-- ENUNCIADO / PREGUNTA -->
+            <div id="content-statement-block" class="mb-6">
+              <h4 id="statement-title" class="text-xs text-indigo-400 font-semibold tracking-wider uppercase mb-1">Declaración</h4>
+              <p id="statement-text" class="text-xl md:text-2xl font-bold text-white leading-relaxed italic">
+                "La marihuana es natural, por lo tanto no hace daño"
+              </p>
+            </div>
+          </div>
+
+          <!-- ÁREA DEL JUEGO INTERACTIVO (ANTES DE REVELAR) -->
+          <div id="interactive-game-zone" class="bg-slate-950 border border-slate-800/80 p-5 rounded-2xl mb-6 text-center">
+            
+            <div id="game-prompt-mito">
+              <p class="text-sm text-slate-300 font-semibold mb-4">¿Qué opinas tú? ¿Este enunciado es verdadero o es falso?</p>
+              <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <button onclick="voteAnswer(true)" class="flex-1 py-3 px-6 bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 hover:border-rose-500 rounded-xl transition-all font-bold text-rose-300 text-sm flex items-center justify-center gap-2">
+                  ❌ Es un Mito / Falso
+                </button>
+                <button onclick="voteAnswer(false)" class="flex-1 py-3 px-6 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 hover:border-emerald-500 rounded-xl transition-all font-bold text-emerald-300 text-sm flex items-center justify-center gap-2">
+                  ✅ Es Real / Verdadero
+                </button>
+              </div>
+            </div>
+
+            <div id="game-prompt-pregunta" class="hidden">
+              <p class="text-sm text-slate-300 font-semibold mb-4">Pregunta de reflexión: ¿Cómo responderías a esto en el aula?</p>
+              <button onclick="revealReality()" class="w-full py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all text-sm flex items-center justify-center gap-2">
+                📖 Ver Respuesta Científica
+              </button>
+            </div>
+
+            <!-- Feedback de votación -->
+            <div id="vote-feedback" class="hidden mt-4 text-sm font-semibold">
+              <!-- Cambiará dinámicamente -->
+            </div>
+          </div>
+
+          <!-- LA REALIDAD / RESPUESTA (OCULTO POR DEFECTO, SE REVELA) -->
+          <div id="reality-reveal-block" class="hidden bg-slate-950 border-l-4 border-indigo-500 p-5 rounded-r-2xl mb-6 animate-fade-in">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">🧪</span>
+              <h5 class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Evidencia Científica Real</h5>
+            </div>
+            <p id="reality-text" class="text-sm md:text-base text-slate-200 leading-relaxed">
+              La marihuana actual posee altos niveles de THC...
+            </p>
+          </div>
+
+          <!-- Pie de la Tarjeta con control de Revelar / Historial -->
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-slate-800">
+            <button id="btn-reveal-manual" onclick="revealReality()" class="w-full sm:w-auto px-5 py-2.5 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 hover:text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+              <span>Mostrar Evidencia Completa</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+            
+            <div class="flex items-center gap-2 text-slate-500 text-xs">
+              <span>¿Quieres debatir este tema?</span>
+              <a href="#taller-guia" class="text-indigo-400 hover:underline">Ver ideas de debate</a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- HISTORIAL DE GIROS RECIENTES -->
+    <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 mb-16">
+      <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <span>🕒</span> Historial de Giros en esta Sesión
+      </h3>
+      <div id="spin-history" class="flex flex-wrap gap-2 text-slate-300">
+        <!-- Generado dinámicamente -->
+        <p class="text-xs text-slate-500 italic">Aún no has girado la ruleta. ¡Prueba girarla unas veces para armar tu bitácora de sesión!</p>
+      </div>
+    </div>
+
+    <!-- DIRECTORIO DE BÚSQUEDA COMPLETO -->
+    <section class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 mb-16 shadow-xl relative overflow-hidden">
+      <div class="absolute -top-32 -right-32 w-64 h-64 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+            <span>📚</span> Buscador y Listado Completo de Contenidos
+          </h3>
+          <p class="text-xs md:text-sm text-slate-400 mt-1">Busca cualquier concepto o mito de manera directa para usarlo de referencia rápida en tu consejería.</p>
+        </div>
+        <div class="relative w-full md:w-80">
+          <input type="text" id="search-input" oninput="searchContent()" placeholder="Ej. clonazepam, THC, reflejos, vape..." class="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition">
+          <span class="absolute right-3 top-3 text-slate-500 text-xs pointer-events-none">🔍</span>
+        </div>
+      </div>
+
+      <!-- Filtros del directorio -->
+      <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-4">
+        <button onclick="setDirectoryFilter('all')" id="dir-all" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white transition-all">Todos los registros</button>
+        <button onclick="setDirectoryFilter('mito')" id="dir-mito" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">Solo Mitos</button>
+        <button onclick="setDirectoryFilter('pregunta')" id="dir-pregunta" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all">Solo Preguntas</button>
+      </div>
+
+      <!-- Lista del Directorio -->
+      <div id="directory-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2">
+        <!-- Renderizado con JS -->
+      </div>
+    </section>
+
+    <!-- GUÍA DE TALLERES / CONSEJERÍAS (ACORDEÓN) -->
+    <section id="taller-guia" class="bg-gradient-to-br from-indigo-950 to-slate-950 border border-indigo-500/20 rounded-3xl p-6 md:p-8 shadow-xl">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="p-3 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-xl text-2xl">👩‍🏫</span>
+        <div>
+          <h3 class="text-xl md:text-2xl font-bold text-white">Guía Práctica para Talleres y Consejerías Escolares</h3>
+          <p class="text-sm text-slate-400">Cómo aprovechar al máximo este recurso interactivo con grupos de estudiantes.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Dinámica 1 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="bg-indigo-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">1</span>
+            <h4 class="font-bold text-sm text-white">Dinámica de Votación Rápida</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Divide al grupo en dos bandos. Haz girar la ruleta y muestra la frase. Pídeles que voten (Mito o Realidad) antes de revelar la evidencia científica en pantalla. Genera un debate rápido de 2 minutos pidiendo a un representante de cada lado que justifique su elección.
+          </p>
+        </div>
+
+        <!-- Dinámica 2 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="bg-indigo-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">2</span>
+            <h4 class="font-bold text-sm text-white">El Rol del Consejero</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Usa el buscador para consejerías individuales. Si un estudiante llega con la creencia de que "el vape es solo agua con sabor", puedes buscar el tema instantáneamente aquí, ver la explicación juntos, y usar los datos como un respaldo neutro (no impositivo) que deconstruya su creencia.
+          </p>
+        </div>
+
+        <!-- Dinámica 3 -->
+        <div class="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="bg-indigo-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">3</span>
+            <h4 class="font-bold text-sm text-white">La Pregunta Caliente</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Filtra por "Preguntas clave". Invita a un voluntario a pasar adelante a girar la ruleta. Al salir la pregunta (ej. ¿Por qué el alcohol daña el hígado?), permítele explicar a sus compañeros con sus propias palabras, y luego usa el botón de revelación para consolidar la lección.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="mt-6 pt-6 border-t border-slate-800 text-center">
+        <p class="text-xs text-slate-400">
+          💡 <strong>Recomendación pedagógica:</strong> Evita el tono punitivo o de regaño. Apóyate en el juego y la rigurosidad científica para abrir canales reales de comunicación y confianza.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="border-t border-slate-900 bg-slate-950 py-8 px-4 mt-16 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <p>© 2026 La Ruleta de la Verdad. Material adaptado del Consumo de Sustancias: Mitos y Realidades.</p>
+      <div class="flex gap-4">
+        <a href="#" class="hover:text-indigo-400 transition">Prevención Escolar</a>
+        <span>•</span>
+        <a href="#" class="hover:text-indigo-400 transition">Salud Mental</a>
+        <span>•</span>
+        <a href="#" class="hover:text-indigo-400 transition">Contacto de Apoyo</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT CON LOGICA INTERACTIVA COMPLETA -->
+  <script>
+    // -------------------------------------------------------------
+    // BASE DE DATOS DE CONTENIDOS (Mitos, Realidades y Preguntas)
+    // -------------------------------------------------------------
+    const ALL_ITEMS = [
+      {
+        id: "M01",
+        type: "mito",
+        substance: "Marihuana",
+        color: "#10b981", // Emerald
+        statement: "La marihuana es natural, por lo tanto, no hace daño.",
+        reality: "Que algo sea natural no significa que sea inocuo (el veneno de serpiente también es natural). La marihuana actual tiene concentraciones de THC mucho más altas que hace décadas y su humo contiene alquitrán y toxinas similares al tabaco. Afecta el desarrollo cerebral y puede gatillar brotes psicóticos en personas con predisposición genética."
+      },
+      {
+        id: "M02",
+        type: "mito",
+        substance: "Alcohol",
+        color: "#f59e0b", // Amber
+        statement: "El alcohol te da energía y te pone alegre.",
+        reality: "El alcohol es un depresor del sistema nervioso. Lo que ocurre al principio es que desinhibe (duerme la parte del cerebro que controla el comportamiento social), dando una falsa sensación de energía. Si se sigue bebiendo, aparecen los efectos reales de la depresión cerebral: pérdida de coordinación, lenguaje traposo y somnolencia."
+      },
+      {
+        id: "M03",
+        type: "mito",
+        substance: "Multisustancia",
+        color: "#f43f5e", // Rose
+        statement: "Mezclar diferentes drogas solo aumenta la diversión.",
+        reality: "Combinar sustancias es una de las prácticas más peligrosas. Mezclar dos depresores (como alcohol y ansiolíticos) puede causar un paro cardiorrespiratorio por efecto sinérgico. Mezclar un estimulante con un depresor (como cocaína y alcohol) enmascara los efectos de ambos, haciendo que la persona consuma dosis letales sin darse cuenta y generando compuestos químicos secundarios altamente tóxicos para el corazón (como el cocaetileno)."
+      },
+      {
+        id: "M04",
+        type: "mito",
+        substance: "Vapeo/Tabaco",
+        color: "#06b6d4", // Cyan
+        statement: "Los vapes o cigarrillos electrónicos son solo vapor de agua con sabor.",
+        reality: "No es vapor, es un aerosol que contiene nicotina (a menudo en altas dosis), metales pesados (como níquel, estaño y plomo) y compuestos químicos que, al calentarse, se vuelven cancerígenos. Causan daños inflamatorios severos en los pulmones conocidos como lesiones pulmonares asociadas al vapeo (EVALI)."
+      },
+      {
+        id: "M05",
+        type: "mito",
+        substance: "Multisustancia",
+        color: "#f43f5e", // Rose
+        statement: "Dejar las drogas es solo una cuestión de fuerza de voluntad.",
+        reality: "La adicción altera la estructura y la función del cerebro a nivel físico, dañando los circuitos de toma de decisiones y control de impulsos. No es un fallo moral ni falta de carácter; es una enfermedad neurobiológica crónica que suele requerir acompañamiento profesional, herramientas terapéuticas y apoyo del entorno para su recuperación."
+      },
+      {
+        id: "M06",
+        type: "mito",
+        substance: "Multisustancia",
+        color: "#f43f5e", // Rose
+        statement: "Las drogas de receta médica o farmacia son seguras porque las hace un laboratorio.",
+        reality: "Los jarabes para la tos o los ansiolíticos (como el clonazepam) usados sin receta médica causan adicción rápida, daños neuronales y paros respiratorios."
+      },
+      {
+        id: "M07",
+        type: "mito",
+        substance: "Alcohol",
+        color: "#f59e0b", // Amber
+        statement: "Tomar un café cargado o un baño frío te quita lo borracho al toque.",
+        reality: "El café te despierta y el agua te saca el frío, pero el alcohol sigue en tu sangre. Lo único que baja el alcohol es el tiempo, ya que el hígado lo procesa muy lento (aprox. una copa por hora)."
+      },
+      {
+        id: "M08",
+        type: "mito",
+        substance: "Alcohol",
+        color: "#f59e0b", // Amber
+        statement: "Si fumas o tomas poco, puedes manejar sin problemas.",
+        reality: "Aunque te sientas 'bien', tus reflejos ya se pusieron lentos y tu cerebro tarda más en reaccionar ante un peligro en la calle. La mayoría de los accidentes ocurren bajo efectos moderados del consumo."
+      },
+      {
+        id: "P01",
+        type: "pregunta",
+        substance: "Multisustancia",
+        color: "#6366f1", // Indigo
+        statement: "¿Cómo cambian las drogas el funcionamiento del cerebro?",
+        reality: "Cambian la forma en que las neuronas se mandan mensajes. Engañan al cerebro liberando un químico llamado dopamina, que produce un placer falso muy intenso y hace que la persona quiera repetir el consumo a toda costa."
+      },
+      {
+        id: "P02",
+        type: "pregunta",
+        substance: "Multisustancia",
+        color: "#6366f1", // Indigo
+        statement: "¿Qué tipos de drogas existen según su efecto?",
+        reality: "Se dividen en tres grandes grupos: Estimulantes: Te aceleran (como la cocaína o la nicotina). Depresoras: Te frenan y relajan (como el alcohol o algunos medicamentos). Alucinógenas: Te hacen ver o sentir cosas que no son reales (como el LSD o los hongos)."
+      },
+      {
+        id: "P03",
+        type: "pregunta",
+        substance: "Multisustancia",
+        color: "#6366f1", // Indigo
+        statement: "¿Por qué las drogas dañan más a los adolescentes?",
+        reality: "Porque el cerebro humano termina de crecer cerca de los 25 años. La parte que controla los impulsos y toma las decisiones es la última en madurar; si se usan drogas antes, esa zona no se desarrolla bien en su máximo potencial."
+      },
+      {
+        id: "P04",
+        type: "pregunta",
+        substance: "Multisustancia",
+        color: "#6366f1", // Indigo
+        statement: "¿Qué es la 'tolerancia' a una droga?",
+        reality: "Es cuando el cuerpo se acostumbra a la sustancia. Como ya no le hace el mismo efecto que al principio, la persona necesita tomar dosis cada vez más grandes para sentir lo mismo."
+      },
+      {
+        id: "P05",
+        type: "pregunta",
+        substance: "Alcohol",
+        color: "#f59e0b", // Amber
+        statement: "¿Qué le pasa al hígado cuando se toma mucho alcohol?",
+        reality: "El hígado es el filtro que limpia el alcohol del cuerpo. Si se toma mucho, el filtro se satura, se llena de grasa, se inflama y puede terminar con cicatrices graves que no se curan, algo llamado cirrosis hepática."
+      },
+      {
+        id: "P06",
+        type: "pregunta",
+        substance: "Vapeo/Tabaco",
+        color: "#06b6d4", // Cyan
+        statement: "¿Cómo dañan el cigarro y el vapeo al corazón?",
+        reality: "Hacen que las arterias se achiquen y se pongan duras. Esto obliga al corazón a trabajar el doble de rápido y con menos oxígeno, subiendo gravemente el riesgo de sufrir un infarto."
+      },
+      {
+        id: "P07",
+        type: "pregunta",
+        substance: "Marihuana",
+        color: "#10b981", // Emerald
+        statement: "¿La marihuana afecta la memoria?",
+        reality: "Sí. El componente de la marihuana (THC) altera la zona del cerebro que guarda los recuerdos. Por eso, consumirla hace que sea mucho más difícil concentrarse, estudiar y recordar cosas a corto plazo."
+      },
+      {
+        id: "P08",
+        type: "pregunta",
+        substance: "Multisustancia",
+        color: "#6366f1", // Indigo
+        statement: "¿Qué es una sobredosis?",
+        reality: "Es cuando se mete al cuerpo más droga de la que puede aguantar. El organismo se intoxica tanto que los sistemas vitales fallan: con el alcohol u opioides la respiración se puede apagar, y con la cocaína el corazón puede colapsar por acelerarse demasiado."
+      }
+    ];
+
+    // ESTADO DE LA APLICACIÓN
+    let currentMode = 'todos'; // 'todos', 'mitos', 'preguntas'
+    let selectedSubstance = 'all'; // 'all', 'Marihuana', 'Alcohol', 'Vapeo/Tabaco', 'Multisustancia'
+    let currentFilteredItems = [...ALL_ITEMS];
+    let selectedItem = null;
+    let history = [];
+    let isSoundEnabled = true;
+
+    // AUDIO SYNTHESIS ENGINE (Web Audio API)
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playTickSound() {
+      if (!isSoundEnabled) return;
+      initAudio();
+      try {
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
+        
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+      } catch (e) {
+        console.log("Audio not allowed yet by user interaction");
+      }
+    }
+
+    function playSuccessChime() {
+      if (!isSoundEnabled) return;
+      initAudio();
+      try {
+        const now = audioCtx.currentTime;
+        const notes = [329.63, 392.00, 523.25, 659.25]; // E4, G4, C5, E5
+        notes.forEach((freq, index) => {
+          let osc = audioCtx.createOscillator();
+          let gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + (index * 0.08));
+          
+          gain.gain.setValueAtTime(0.07, now + (index * 0.08));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (index * 0.08) + 0.2);
+          
+          osc.start(now + (index * 0.08));
+          osc.stop(now + (index * 0.08) + 0.25);
+        });
+      } catch (e) {
+        console.log("Audio play error", e);
+      }
+    }
+
+    // TOGGLE DE SONIDO
+    const btnSound = document.getElementById('toggle-sound');
+    const txtSound = document.getElementById('sound-status');
+    const iconSound = document.getElementById('sound-icon');
+    btnSound.addEventListener('click', () => {
+      isSoundEnabled = !isSoundEnabled;
+      if (isSoundEnabled) {
+        txtSound.innerText = "Sonido Activo";
+        iconSound.innerText = "🔊";
+        btnSound.className = "px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 transition flex items-center gap-2 text-sm text-indigo-300";
+        initAudio();
+      } else {
+        txtSound.innerText = "Muteado";
+        iconSound.innerText = "🔇";
+        btnSound.className = "px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 transition flex items-center gap-2 text-sm text-slate-500";
+      }
+    });
+
+    // -------------------------------------------------------------
+    // CANVAS DE LA RULETA (DIBUJO Y CONTROL)
+    // -------------------------------------------------------------
+    const canvas = document.getElementById('wheel-canvas');
+    const ctx = canvas.getContext('2d');
+    let currentAngle = 0;
+    let isSpinning = false;
+    let spinVelocity = 0;
+    let lastTickAngle = 0;
+
+    // Actualiza los elementos que caben en el filtro actual
+    function updateFilteredItems() {
+      currentFilteredItems = ALL_ITEMS.filter(item => {
+        const matchMode = (currentMode === 'todos') ||
+                          (currentMode === 'mitos' && item.type === 'mito') ||
+                          (currentMode === 'preguntas' && item.type === 'pregunta');
+        const matchSubstance = (selectedSubstance === 'all') || (item.substance === selectedSubstance);
+        return matchMode && matchSubstance;
+      });
+
+      // Si por algún motivo nos quedamos sin items en un filtro extremo, mostramos un aviso y volvemos al default
+      if (currentFilteredItems.length === 0) {
+        currentFilteredItems = [...ALL_ITEMS];
+        selectedSubstance = 'all';
+        document.querySelectorAll("[id^='tag-sub-']").forEach(btn => {
+          btn.className = "px-3 py-1 rounded-full text-xs font-medium border border-slate-800 bg-slate-950 text-slate-400";
+        });
+        document.getElementById('tag-sub-all').className = "px-3 py-1 rounded-full text-xs font-medium border border-indigo-500/50 bg-indigo-500/20 text-indigo-200 transition-all";
+      }
+
+      drawWheel();
+    }
+
+    // Dibujar la Ruleta de manera premium
+    function drawWheel() {
+      const size = canvas.width;
+      const center = size / 2;
+      const radius = center - 20;
+      const totalSlices = currentFilteredItems.length;
+      const sliceAngle = (Math.PI * 2) / totalSlices;
+
+      ctx.clearRect(0, 0, size, size);
+
+      // Dibujar Sombra Base/Borde Exterior oscuro
+      ctx.beginPath();
+      ctx.arc(center, center, radius + 15, 0, Math.PI * 2);
+      ctx.fillStyle = '#0f172a'; // Slate 900
+      ctx.fill();
+
+      // Borde de luces de neón exterior
+      ctx.beginPath();
+      ctx.arc(center, center, radius + 5, 0, Math.PI * 2);
+      ctx.strokeStyle = '#312e81'; // Indigo 900
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      currentFilteredItems.forEach((item, index) => {
+        const startAngle = currentAngle + index * sliceAngle;
+        const endAngle = startAngle + sliceAngle;
+
+        // Dibujar Rebanada
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, startAngle, endAngle);
+        ctx.fillStyle = item.color;
+        ctx.fill();
+
+        // Overlay suave para dar profundidad
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, startAngle, endAngle);
+        const grad = ctx.createRadialGradient(center, center, 100, center, center, radius);
+        grad.addColorStop(0, 'rgba(0,0,0,0.1)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.45)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Línea divisoria
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, startAngle, endAngle);
+        ctx.strokeStyle = 'rgba(15, 23, 42, 0.45)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Guardar contexto para el texto rotado
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate(startAngle + sliceAngle / 2);
+
+        // Texto de la rebanada (acortado con puntos suspensivos para legibilidad)
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px "Outfit", sans-serif';
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 4;
+        ctx.textAlign = 'right';
+
+        let label = item.type === 'mito' ? `⚠️ Mito ${item.id}` : `❓ Preg ${item.id}`;
+        // Si hay espacio, mostramos más texto descriptivo
+        ctx.fillText(label, radius - 45, 8);
+
+        // Emoji representativo de la sustancia
+        let emoji = "🧠";
+        if (item.substance === "Marihuana") emoji = "🍁";
+        if (item.substance === "Alcohol") emoji = "🍺";
+        if (item.substance === "Vapeo/Tabaco") emoji = "💨";
+        ctx.font = '28px "Outfit", sans-serif';
+        ctx.fillText(emoji, radius - 15, 10);
+
+        ctx.restore();
+      });
+
+      // Círculo central oscuro decorativo
+      ctx.beginPath();
+      ctx.arc(center, center, 75, 0, Math.PI * 2);
+      ctx.fillStyle = '#020617'; // Slate 950
+      ctx.fill();
+      ctx.strokeStyle = '#4338ca'; // Indigo 700
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    }
+
+    // -------------------------------------------------------------
+    // SISTEMA FÍSICO DE GIRO DE LA RULETA
+    // -------------------------------------------------------------
+    let spinAngleStart = 0;
+    let spinTime = 0;
+    let spinTimeTotal = 0;
+
+    function spinWheel() {
+      if (isSpinning) return;
+      initAudio();
+
+      // Sonido de inicio acelerado
+      playTickSound();
+
+      isSpinning = true;
+      const minSpins = 4;
+      const maxSpins = 8;
+      // Ángulo de giro aleatorio fuerte
+      spinAngleStart = Math.random() * 10 + 10;
+      spinTime = 0;
+      spinTimeTotal = Math.random() * 3000 + 4000; // Dura entre 4 y 7 segundos
+
+      // Iniciar bucle de animación
+      rotateWheel();
+    }
+
+    function rotateWheel() {
+      spinTime += 30;
+      if (spinTime >= spinTimeTotal) {
+        stopRotateWheel();
+        return;
+      }
+
+      // Ecuación de desaceleración suave (Ease Out)
+      const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+      currentAngle += (spinAngle * Math.PI / 180);
+      drawWheel();
+
+      // Trigger de sonido al cambiar de segmento (sensación física)
+      const totalSlices = currentFilteredItems.length;
+      const sliceAngle = (Math.PI * 2) / totalSlices;
+      const normalizedAngle = (currentAngle % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+      const currentSegmentIndex = Math.floor(normalizedAngle / sliceAngle);
+      
+      if (currentSegmentIndex !== lastTickAngle) {
+        playTickSound();
+        triggerPointerTick();
+        lastTickAngle = currentSegmentIndex;
+      }
+
+      requestAnimationFrame(rotateWheel);
+    }
+
+    // Efecto visual de rebote en la aguja indicadora
+    function triggerPointerTick() {
+      const pointer = document.getElementById('wheel-pointer');
+      pointer.classList.add('indicator-tick');
+      setTimeout(() => {
+        pointer.classList.remove('indicator-tick');
+      }, 150);
+    }
+
+    function stopRotateWheel() {
+      isSpinning = false;
+      playSuccessChime();
+
+      // Calcular segmento ganador
+      const totalSlices = currentFilteredItems.length;
+      const sliceAngle = (Math.PI * 2) / totalSlices;
+
+      // La aguja indicadora está en el tope superior (ángulo = 3 * PI / 2 o -PI / 2)
+      // Calculamos de forma inversa basándonos en la rotación acumulada de la ruleta
+      let degrees = (currentAngle * 180) / Math.PI + 90;
+      let arcd = (sliceAngle * 180) / Math.PI;
+      let index = Math.floor((360 - (degrees % 360)) / arcd);
+      index = (index + totalSlices) % totalSlices;
+
+      const item = currentFilteredItems[index];
+      selectItemDetails(item);
+      triggerConfetti();
+    }
+
+    function easeOut(t, b, c, d) {
+      const ts = (t /= d) * t;
+      const tc = ts * t;
+      return b + c * (tc + -3 * ts + 3 * t);
+    }
+
+    // Drag / Swipe para girar con ratón o dedo
+    let isDragging = false;
+    let startAngleX = 0;
+    let startAngleY = 0;
+    let dragStartAngle = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      if (isSpinning) return;
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      startAngleX = e.clientX - (rect.left + rect.width / 2);
+      startAngleY = e.clientY - (rect.top + rect.height / 2);
+      dragStartAngle = Math.atan2(startAngleY, startAngleX);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - (rect.left + rect.width / 2);
+      const y = e.clientY - (rect.top + rect.height / 2);
+      const currentDragAngle = Math.atan2(y, x);
+      currentAngle += (currentDragAngle - dragStartAngle);
+      dragStartAngle = currentDragAngle;
+      drawWheel();
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        // Lanzamos un giro suave inmediato basado en la inercia
+        spinWheel();
+      }
+    });
+
+    // Touch support para móviles
+    canvas.addEventListener('touchstart', (e) => {
+      if (isSpinning || e.touches.length === 0) return;
+      isDragging = true;
+      const rect = canvas.getBoundingClientRect();
+      startAngleX = e.touches[0].clientX - (rect.left + rect.width / 2);
+      startAngleY = e.touches[0].clientY - (rect.top + rect.height / 2);
+      dragStartAngle = Math.atan2(startAngleY, startAngleX);
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (!isDragging || e.touches.length === 0) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.touches[0].clientX - (rect.left + rect.width / 2);
+      const y = e.touches[0].clientY - (rect.top + rect.height / 2);
+      const currentDragAngle = Math.atan2(y, x);
+      currentAngle += (currentDragAngle - dragStartAngle);
+      dragStartAngle = currentDragAngle;
+      drawWheel();
+    });
+
+    canvas.addEventListener('touchend', () => {
+      if (isDragging) {
+        isDragging = false;
+        spinWheel();
+      }
+    });
+
+
+    // -------------------------------------------------------------
+    // INTERACCIÓN Y MANEJO DE SELECCIÓN DE TARJETA
+    // -------------------------------------------------------------
+    function selectRandom() {
+      if (isSpinning) return;
+      const randomIndex = Math.floor(Math.random() * currentFilteredItems.length);
+      selectItemDetails(currentFilteredItems[randomIndex]);
+      triggerConfetti();
+    }
+
+    function selectItemDetails(item) {
+      selectedItem = item;
+
+      // Actualizar tarjeta interactiva
+      document.getElementById('card-welcome').classList.add('hidden');
+      const cardActive = document.getElementById('card-active');
+      cardActive.classList.remove('hidden');
+
+      // Tipos de badge
+      const badgeType = document.getElementById('badge-type');
+      if (item.type === 'mito') {
+        badgeType.innerText = 'MITO';
+        badgeType.className = "px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 uppercase tracking-wider";
+        document.getElementById('statement-title').innerText = 'Declaración típica';
+        document.getElementById('game-prompt-mito').classList.remove('hidden');
+        document.getElementById('game-prompt-pregunta').classList.add('hidden');
+      } else {
+        badgeType.innerText = 'PREGUNTA CLAVE';
+        badgeType.className = "px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider";
+        document.getElementById('statement-title').innerText = 'Pregunta de reflexión';
+        document.getElementById('game-prompt-mito').classList.add('hidden');
+        document.getElementById('game-prompt-pregunta').classList.remove('hidden');
+      }
+
+      // Sustancia Badge
+      const badgeSub = document.getElementById('badge-substance');
+      let emoji = "🧠";
+      if (item.substance === "Marihuana") emoji = "🍁";
+      if (item.substance === "Alcohol") emoji = "🍺";
+      if (item.substance === "Vapeo/Tabaco") emoji = "💨";
+      badgeSub.innerText = `${emoji} ${item.substance}`;
+
+      // Datos adicionales
+      document.getElementById('info-id').innerText = `ID: ${item.id}`;
+      document.getElementById('statement-text').innerText = `"${item.statement}"`;
+      document.getElementById('reality-text').innerText = item.reality;
+
+      // Ocultar sección de la realidad científica inicialmente para interactividad
+      document.getElementById('reality-reveal-block').classList.add('hidden');
+      document.getElementById('vote-feedback').classList.add('hidden');
+      document.getElementById('btn-reveal-manual').classList.remove('hidden');
+
+      // Agregar al historial de giros
+      addToHistory(item);
+    }
+
+    function voteAnswer(userGuessedMito) {
+      if (!selectedItem) return;
+
+      const feedback = document.getElementById('vote-feedback');
+      feedback.classList.remove('hidden');
+
+      // En esta base de datos, TODOS los declarados en el modo 'mito' son mitos (es decir, la afirmación original es falsa/un mito)
+      if (userGuessedMito) {
+        feedback.className = "mt-4 text-sm font-semibold p-3 bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 rounded-xl";
+        feedback.innerHTML = "🎯 ¡Excelente respuesta! Efectivamente es un mito popular que la ciencia desmiente.";
+      } else {
+        feedback.className = "mt-4 text-sm font-semibold p-3 bg-rose-950/60 border border-rose-500/40 text-rose-300 rounded-xl";
+        feedback.innerHTML = "🤔 Buen intento, pero es falso. La afirmación corresponde a un mito peligroso.";
+      }
+
+      revealReality();
+    }
+
+    function revealReality() {
+      document.getElementById('reality-reveal-block').classList.remove('hidden');
+      document.getElementById('btn-reveal-manual').classList.add('hidden');
+    }
+
+    // Historial dinámico
+    function addToHistory(item) {
+      // Evitar duplicados consecutivos
+      if (history.length > 0 && history[0].id === item.id) return;
+
+      history.unshift(item);
+      if (history.length > 8) history.pop();
+
+      const container = document.getElementById('spin-history');
+      container.innerHTML = '';
+
+      history.forEach(hist => {
+        const span = document.createElement('button');
+        span.onclick = () => selectItemDetails(hist);
+        span.className = "text-xs px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900/80 text-slate-300 hover:border-indigo-500 hover:text-white transition cursor-pointer flex items-center gap-1.5";
+        
+        let emoji = "🧠";
+        if (hist.substance === "Marihuana") emoji = "🍁";
+        if (hist.substance === "Alcohol") emoji = "🍺";
+        if (hist.substance === "Vapeo/Tabaco") emoji = "💨";
+
+        span.innerHTML = `<span>${emoji}</span> <span class="font-bold">${hist.id}</span>: ${hist.statement.substring(0, 30)}...`;
+        container.appendChild(span);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // GESTIÓN DE CONFIGURACIONES Y MODOS
+    // -------------------------------------------------------------
+    function setMode(mode) {
+      currentMode = mode;
+      
+      // Actualizar UI del tab activo
+      const btnTodos = document.getElementById('btn-mode-todos');
+      const btnMitos = document.getElementById('btn-mode-mitos');
+      const btnPreguntas = document.getElementById('btn-mode-preguntas');
+
+      // Reiniciar clases
+      const inactiveClass = "flex-1 py-3 px-4 rounded-xl text-xs md:text-sm font-semibold text-slate-400 hover:text-slate-200 transition-all";
+      const activeClass = "flex-1 py-3 px-4 rounded-xl text-xs md:text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/20";
+      
+      btnTodos.className = inactiveClass;
+      btnMitos.className = inactiveClass;
+      btnPreguntas.className = inactiveClass;
+
+      if (mode === 'todos') btnTodos.className = activeClass;
+      if (mode === 'mitos') btnMitos.className = activeClass;
+      if (mode === 'preguntas') btnPreguntas.className = activeClass;
+
+      updateFilteredItems();
+    }
+
+    function filterBySubstance(substance) {
+      selectedSubstance = substance;
+
+      // Actualizar estados visuales de las píldoras de filtro
+      document.querySelectorAll("[id^='tag-sub-']").forEach(btn => {
+        btn.className = "px-3 py-1 rounded-full text-xs font-medium border border-slate-800 bg-slate-950 text-slate-400 hover:bg-slate-900/60 hover:text-slate-200 transition-all";
+      });
+
+      // Activar clase según selección
+      const activeBtn = document.getElementById(`tag-sub-${substance === 'all' ? 'all' : (substance === 'Marihuana' ? 'marihuana' : (substance === 'Alcohol' ? 'alcohol' : (substance === 'Vapeo/Tabaco' ? 'vapes' : 'multi')))}`);
+      if (activeBtn) {
+        if (substance === 'all') activeBtn.className = "px-3 py-1 rounded-full text-xs font-medium border border-indigo-500/50 bg-indigo-500/20 text-indigo-200 transition-all";
+        if (substance === 'Marihuana') activeBtn.className = "px-3 py-1 rounded-full text-xs font-medium border border-emerald-500/50 bg-emerald-500/20 text-emerald-300 transition-all";
+        if (substance === 'Alcohol') activeBtn.className = "px-3 py-1 rounded-full text-xs font-medium border border-amber-500/50 bg-amber-500/20 text-amber-300 transition-all";
+        if (substance === 'Vapeo/Tabaco') activeBtn.className = "px-3 py-1 rounded-full text-xs font-medium border border-cyan-500/50 bg-cyan-500/20 text-cyan-300 transition-all";
+        if (substance === 'Multisustancia') activeBtn.className = "px-3 py-1 rounded-full text-xs font-medium border border-rose-500/50 bg-rose-500/20 text-rose-300 transition-all";
+      }
+
+      updateFilteredItems();
+    }
+
+
+    // -------------------------------------------------------------
+    // DIRECTORIO COMPLETO Y MÓDULO DE BÚSQUEDA
+    // -------------------------------------------------------------
+    let activeDirectoryFilter = 'all';
+
+    function setDirectoryFilter(filter) {
+      activeDirectoryFilter = filter;
+      
+      // Clases activas / inactivas
+      const activeClass = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white transition-all";
+      const inactiveClass = "text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all";
+
+      document.getElementById('dir-all').className = inactiveClass;
+      document.getElementById('dir-mito').className = inactiveClass;
+      document.getElementById('dir-pregunta').className = inactiveClass;
+
+      document.getElementById(`dir-${filter}`).className = activeClass;
+      searchContent(); // recarga la búsqueda aplicando el filtro
+    }
+
+    function searchContent() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      const listContainer = document.getElementById('directory-list');
+      listContainer.innerHTML = '';
+
+      const filtered = ALL_ITEMS.filter(item => {
+        const matchesQuery = item.statement.toLowerCase().includes(q) || 
+                             item.reality.toLowerCase().includes(q) ||
+                             item.substance.toLowerCase().includes(q) ||
+                             item.id.toLowerCase().includes(q);
+        
+        const matchesFilter = (activeDirectoryFilter === 'all') || 
+                              (activeDirectoryFilter === 'mito' && item.type === 'mito') ||
+                              (activeDirectoryFilter === 'pregunta' && item.type === 'pregunta');
+
+        return matchesQuery && matchesFilter;
+      });
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-500 text-sm">
+            ❌ No se encontraron mitos ni preguntas con el término "${q}".
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "bg-slate-950 border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-700 hover:bg-slate-900/20 transition-all";
+
+        let emoji = "🧠";
+        if (item.substance === "Marihuana") emoji = "🍁";
+        if (item.substance === "Alcohol") emoji = "🍺";
+        if (item.substance === "Vapeo/Tabaco") emoji = "💨";
+
+        const badgeClass = item.type === 'mito' ? 'bg-rose-500/10 text-rose-300 border-rose-500/20' : 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20';
+
+        div.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="px-2 py-0.5 text-[10px] font-bold border rounded-full ${badgeClass} uppercase tracking-wider">${item.type === 'mito' ? 'Mito' : 'Pregunta'}</span>
+              <span class="text-xs text-slate-500 font-mono">${item.id}</span>
+            </div>
+            <h4 class="font-bold text-white text-base mb-2 italic">"${item.statement}"</h4>
+            <p class="text-xs text-slate-400 leading-relaxed line-clamp-3 hover:line-clamp-none transition-all duration-300">${item.reality}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-900 flex justify-between items-center">
+            <span class="text-xs font-semibold text-slate-400 bg-slate-900 px-2 py-1 rounded">${emoji} ${item.substance}</span>
+            <button onclick="scrollToAndSelect('${item.id}')" class="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition flex items-center gap-1">
+              Llevar a ruleta 🎡
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(span = div);
+      });
+    }
+
+    function scrollToAndSelect(id) {
+      const targetItem = ALL_ITEMS.find(item => item.id === id);
+      if (targetItem) {
+        selectItemDetails(targetItem);
+        // Scroll suave hacia arriba donde está el reproductor
+        window.scrollTo({
+          top: canvas.getBoundingClientRect().top + window.scrollY - 120,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+
+    // -------------------------------------------------------------
+    // EFECTOS ESPECIALES (CONFETTI ANIMADO)
+    // -------------------------------------------------------------
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const confettiCtx = confettiCanvas.getContext('2d');
+    let confettiParticles = [];
+    let isConfettiPlaying = false;
+
+    // Redimensionar el canvas del confeti
+    function resizeConfettiCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeConfettiCanvas);
+    resizeConfettiCanvas();
+
+    function triggerConfetti() {
+      confettiParticles = [];
+      const colors = ['#6366f1', '#10b981', '#f59e0b', '#06b6d4', '#f43f5e', '#a855f7'];
+      
+      // Crear 100 partículas en la zona central
+      for (let i = 0; i < 85; i++) {
+        confettiParticles.push({
+          x: Math.random() * confettiCanvas.width,
+          y: confettiCanvas.height + Math.random() * 20, // Empiezan desde abajo
+          r: Math.random() * 5 + 4,
+          d: Math.random() * confettiCanvas.height,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 5,
+          tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+          tiltAngle: 0,
+          vx: Math.random() * 8 - 4,
+          vy: -(Math.random() * 12 + 8) // Impulso hacia arriba
+        });
+      }
+
+      if (!isConfettiPlaying) {
+        isConfettiPlaying = true;
+        updateConfetti();
+      }
+    }
+
+    function updateConfetti() {
+      if (confettiParticles.length === 0) {
+        isConfettiPlaying = false;
+        confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        return;
+      }
+
+      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+      confettiParticles.forEach((p, index) => {
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.y += p.vy;
+        p.x += p.vx;
+        p.vy += 0.25; // Gravedad hacia abajo poco a poco
+
+        p.tilt = Math.sin(p.tiltAngle) * 15;
+
+        // Dibujar partícula
+        confettiCtx.beginPath();
+        confettiCtx.lineWidth = p.r;
+        confettiCtx.strokeStyle = p.color;
+        confettiCtx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        confettiCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+        confettiCtx.stroke();
+
+        // Eliminar si sale del canvas
+        if (p.y > confettiCanvas.height) {
+          confettiParticles.splice(index, 1);
+        }
+      });
+
+      requestAnimationFrame(updateConfetti);
+    }
+
+
+    // -------------------------------------------------------------
+    // INICIALIZACIÓN DE LA APLICACIÓN
+    // -------------------------------------------------------------
+    window.onload = function() {
+      updateFilteredItems();
+      searchContent(); // Inicializar el directorio de búsqueda sin filtros
+    };
+  </script>
+</body>
+</html>
+
+```
